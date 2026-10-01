@@ -160,7 +160,7 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
     # WhatsApp commands - CHECK FIRST
     whatsapp_words = ("find ", "send ", "message ")
     if text.startswith(whatsapp_words):
-        result = parse_and_send_whatsapp(command.strip())
+        result = parse_and_send_whatsapp(text)
         print(result)
         return True
 
