@@ -148,6 +148,23 @@ def interpret_generic_command(command: str, text: str):
     if not text:
         return None
 
+    choose_profile = re.match(
+        r"^(choose|select)\s+(?:the\s+)?(.+?)\s+profile(?:\s+(?:in|for))?\s*(?:chrome|browser)?$",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if choose_profile:
+        profile_name = choose_profile.group(2).strip()
+        open_chrome()
+        return {
+            "success": True,
+            "message": f"Profile command recognized: '{profile_name}'. Opening Chrome.",
+        }
+
+    if re.match(r"^(choose|select)\s+(?:the\s+)?profile\s+(?:in|for)\s*(?:chrome|browser)$", text, flags=re.IGNORECASE):
+        open_chrome()
+        return {"success": True, "message": "Profile command recognized. Opening Chrome."}
+
     if ("choose" in text or "select" in text) and "profile" in text:
         if "chrome" in text:
             open_chrome()
