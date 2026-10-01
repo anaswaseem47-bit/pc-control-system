@@ -157,6 +157,13 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
         print(HELP_TEXT)
         return True
 
+    # WhatsApp commands - CHECK FIRST
+    whatsapp_words = ("find ", "send ", "message ")
+    if text.startswith(whatsapp_words):
+        result = parse_and_send_whatsapp(command.strip())
+        print(result)
+        return True
+
     if "lock pc" in text:
         lock_pc()
         print("Locked the PC.")
@@ -251,17 +258,6 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
         typed = text.replace("type ", "", 1)
         type_text(typed)
         print(f"Typed: {typed}")
-        return True
-
-    whatsapp_words = (
-        "find ",
-        "send ",
-        "message ",
-    )
-
-    if text.startswith(whatsapp_words):
-        result = parse_and_send_whatsapp(command.strip())
-        print(result)
         return True
 
     if "open whatsapp" in text or "whatsapp in chrome" in text or "open whatsapp web" in text:
