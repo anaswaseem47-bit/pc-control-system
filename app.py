@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Optional
 
 from browser_control import (
@@ -79,6 +80,8 @@ Browser:
   find Ahmed and send hello
   send hello to Ahmed
   message Ahmed hello
+  look for anas
+  choose anaswaseem profile in chrome
 
 App and file control:
   open file C:/path/to/file.txt
@@ -140,6 +143,47 @@ def extract_path_from_command(command: str, keyword: str) -> Optional[str]:
     return remainder if remainder else None
 
 
+def interpret_generic_command(command: str, text: str):
+    """Support broader natural-language commands beyond the rigid command list."""
+    if not text:
+        return None
+
+    if ("choose" in text or "select" in text) and "profile" in text:
+        if "chrome" in text:
+            open_chrome()
+            return {"success": True, "message": f"Profile selection request recognized: '{command}'. Opening Chrome."}
+        if "whatsapp" in text:
+            open_whatsapp()
+            return {"success": True, "message": f"Profile selection request recognized: '{command}'. Opening WhatsApp Web."}
+        return {"success": True, "message": f"Profile-selection command recognized: '{command}'. No specific profile was provided, so default browser/profile will be used."}
+
+    if "search whatsapp" in text or "whatsapp search" in text:
+        return open_whatsapp()
+
+    if "open" in text and "chrome" in text and "whatsapp" not in text:
+        open_chrome()
+        return {"success": True, "message": "Opened Chrome."}
+
+    if "open" in text and "whatsapp" in text:
+        return open_whatsapp()
+
+    if "find" in text or "look for" in text or "search for" in text:
+        if "whatsapp" in text or "chat" in text:
+            return parse_and_send_whatsapp(text)
+        if "google" in text or "web" in text:
+            query = re.sub(r"^(find|look for|search for)\s+", "", text, flags=re.IGNORECASE)
+            query = re.sub(r"\s+(in|on)\s+(google|web)\s*$", "", query, flags=re.IGNORECASE)
+            return search_web(query)
+
+    if "send" in text and "whatsapp" in text:
+        return parse_and_send_whatsapp(text)
+
+    if "message" in text and ("whatsapp" in text or "chat" in text):
+        return parse_and_send_whatsapp(text)
+
+    return None
+
+
 def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAssistant] = None) -> bool:
     text = command.strip().lower()
     if not text:
@@ -155,13 +199,6 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
 
     if text in {"help", "?", "commands"}:
         print(HELP_TEXT)
-        return True
-
-    # WhatsApp commands - CHECK FIRST
-    whatsapp_words = ("find ", "send ", "message ")
-    if text.startswith(whatsapp_words):
-        result = parse_and_send_whatsapp(text)
-        print(result)
         return True
 
     if "lock pc" in text:
@@ -258,6 +295,12 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
         typed = text.replace("type ", "", 1)
         type_text(typed)
         print(f"Typed: {typed}")
+        return True
+
+    whatsapp_words = ("find ", "send ", "message ", "look for ", "search whatsapp")
+    if text.startswith(whatsapp_words):
+        result = parse_and_send_whatsapp(command.strip())
+        print(result)
         return True
 
     if "open whatsapp" in text or "whatsapp in chrome" in text or "open whatsapp web" in text:
@@ -419,6 +462,11 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
 
     if "learn my pattern" in text:
         print(json.dumps(learner.generate_summary(), indent=2))
+        return True
+
+    fallback = interpret_generic_command(command, text)
+    if fallback is not None:
+        print(fallback)
         return True
 
     print("Command not recognized. Type 'help' for available commands.")
