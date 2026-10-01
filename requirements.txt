@@ -1,0 +1,45 @@
+# PC Control Assistant
+
+A local Python PC control assistant with:
+
+- system control: shutdown, restart, sleep, lock, hibernate
+- screen and system settings: brightness, volume, screenshots
+- mouse and keyboard automation
+- file and folder management
+- app launch and process control
+- Chrome/browser and internet usage monitoring
+- self-learning usage pattern summary
+- optional voice command support
+
+## Install
+
+```bash
+pip install -r requirements.txt
+```
+
+## Run
+
+```bash
+python app.py
+```
+
+## Example commands
+
+- lock pc
+- shutdown pc
+- open chrome
+- open notepad
+- move mouse 500 300
+- click mouse 200 200
+- type hello world
+- list files C:/Users/Name/Desktop
+- create file C:/Users/Name/Desktop/test.txt
+- send file C:/Users/Name/Desktop/file.pdf to whatsapp
+- take screenshot
+- show usage
+- internet usage
+- exit
+
+## Notes
+
+This project is intended for use on a computer you own or have explicit permission to control.
