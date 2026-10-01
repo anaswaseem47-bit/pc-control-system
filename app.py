@@ -3,6 +3,12 @@ from __future__ import annotations
 import json
 from typing import Optional
 
+from browser_control import (
+    open_browser,
+    open_whatsapp,
+    search_web,
+    parse_and_send_whatsapp,
+)
 from browser_monitor import get_recent_chrome_history
 from learning import UsageLearner
 from network_monitor import get_network_summary, monitor_internet_usage
@@ -61,10 +67,20 @@ Mouse and keyboard:
   hotkey ctrl c
   type hello world
 
-App and file control:
+Browser:
   open chrome
-  open notepad
-  open calculator
+  open whatsapp
+  open whatsapp in chrome
+  open google
+  open youtube
+  search web for python tutorials
+  search for python tutorials
+  open website github.com
+  find Ahmed and send hello
+  send hello to Ahmed
+  message Ahmed hello
+
+App and file control:
   open file C:/path/to/file.txt
   open folder C:/path/to/folder
   list files C:/path/to/folder
@@ -235,6 +251,50 @@ def handle_command(command: str, learner: UsageLearner, voice: Optional[VoiceAss
         typed = text.replace("type ", "", 1)
         type_text(typed)
         print(f"Typed: {typed}")
+        return True
+
+    whatsapp_words = (
+        "find ",
+        "send ",
+        "message ",
+    )
+
+    if text.startswith(whatsapp_words):
+        result = parse_and_send_whatsapp(command.strip())
+        print(result)
+        return True
+
+    if "open whatsapp" in text or "whatsapp in chrome" in text or "open whatsapp web" in text:
+        result = open_whatsapp()
+        print(result)
+        return True
+
+    if "open google" in text:
+        result = open_browser("https://www.google.com")
+        print(result)
+        return True
+
+    if "open youtube" in text:
+        result = open_browser("https://www.youtube.com")
+        print(result)
+        return True
+
+    if text.startswith("search web for "):
+        query = text.replace("search web for ", "", 1).strip()
+        result = search_web(query)
+        print(result)
+        return True
+
+    if text.startswith("search for "):
+        query = text.replace("search for ", "", 1).strip()
+        result = search_web(query)
+        print(result)
+        return True
+
+    if text.startswith("open website "):
+        url = text.replace("open website ", "", 1).strip()
+        result = open_browser(url)
+        print(result)
         return True
 
     if "open chrome" in text:
@@ -410,213 +470,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
